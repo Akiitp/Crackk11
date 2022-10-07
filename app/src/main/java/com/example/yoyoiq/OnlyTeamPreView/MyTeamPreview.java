@@ -3,6 +3,7 @@ package com.example.yoyoiq.OnlyTeamPreView;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -58,9 +59,9 @@ public class MyTeamPreview extends AppCompatActivity {
                     VCnameTv.setVisibility(View.VISIBLE);
                 }
                 String one = "" + listData.get(i).getTitle();
-                String two = "" + listData.get(i).getPoints();
+                String two = "" + listData.get(i).getFantasy_player_rating();
                 nameTxt.setText("" + one);
-                playerPts.setText("" + two);
+                playerPts.setText("" + two + " Cr");
                 if (listData.get(i).getCountry().equals(HelperData.team1NameShort)) {
                     nameTxt.setBackgroundColor(Color.BLACK);
                     nameTxt.setTextColor(Color.WHITE);
