@@ -134,7 +134,7 @@ public class SelectTeams extends AppCompatActivity {
         textView1.setText("" + bouns_cash);
         textView2.setText("" + Entryfee);
         button.setOnClickListener(view -> {
-           JoinContestData();
+            JoinContestData();
         });
         deleteDialog.setView(deleteDialogView);
         deleteDialog.show();
@@ -152,6 +152,7 @@ public class SelectTeams extends AppCompatActivity {
                     }
                 }
             }
+
             @Override
             public void onFailure(Call<ContestJoinResponse> call, Throwable t) {
             }
@@ -161,31 +162,27 @@ public class SelectTeams extends AppCompatActivity {
     private void JoinContestData() {
         progressDialog.setTitle("Please Wait Joining Contest..");
         progressDialog.show();
-        Log.d("Amit","Value "+contest_id);
-        Log.d("Amit","Value22"+HelperData.matchId);
+        Log.d("Amit", "Value " + contest_id);
+        Log.d("Amit", "Value22" + HelperData.matchId);
         Call<JoinContestsResponse> call = ApiClient.getInstance().getApi().getJoinContestResponse(sessionManager.getUserData().getUser_id(), HelperData.matchId, contest_id, SelectTeams.ContestTeamId);
         call.enqueue(new Callback<JoinContestsResponse>() {
             @Override
             public void onResponse(Call<JoinContestsResponse> call, Response<JoinContestsResponse> response) {
-               JoinContestsResponse joinContestsResponse= response.body();
+                JoinContestsResponse joinContestsResponse = response.body();
                 if (response.isSuccessful()) {
-                    Log.d("Amit","Check data"+response.body().getResponse());
                     String Data = new Gson().toJson(response.body());
                     try {
                         JSONObject jsonObject = new JSONObject(Data);
-                        Log.d("Amit","Value "+jsonObject);
 
                         if (joinContestsResponse.getStatus().equalsIgnoreCase("true")) {
                             progressDialog.dismiss();
                             Toast.makeText(SelectTeams.this, "Contest Join Successfully..", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(SelectTeams.this, MainActivity.class);
-                            startActivity(intent);
                             finish();
                             requestTOBalanceDeduction();
                         }
-                        if(joinContestsResponse.getStatus().equalsIgnoreCase("false")){
+                        if (joinContestsResponse.getStatus().equalsIgnoreCase("false")) {
                             progressDialog.dismiss();
-                            if(joinContestsResponse.getResponse().equalsIgnoreCase("team_id already exist")){
+                            if (joinContestsResponse.getResponse().equalsIgnoreCase("team_id already exist")) {
                                 Toast.makeText(SelectTeams.this, "This Team Already Joined..", Toast.LENGTH_SHORT).show();
                                 deleteDialog.dismiss();
                             }

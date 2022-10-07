@@ -99,7 +99,7 @@ public class UpcomingMatchFragment extends Fragment {
             public void onResponse(Call<UpcommingResponse> call, Response<UpcommingResponse> response) {
                 UpcommingResponse status = response.body();
                 if (response.isSuccessful()) {
-
+                    list.clear();
                     String jsonArray = new Gson().toJson(status.getResponse().getItems());
                     JSONArray jsonArray1 = null;
                     try {
