@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,6 +77,7 @@ public class RecentTransactions extends AppCompatActivity {
                                 String created_date = jsonObject.getString("created_date");
                                 String transection_id = jsonObject.getString("transection_id");
                                 String type = jsonObject.getString("type");
+                                Log.d("Amit","Value "+type);
                                 transection dataholder = new transection(userid, type, amount, transection_id, created_date);
                                 list.add(dataholder);
                                 myAdapter.notifyDataSetChanged();
@@ -122,7 +124,7 @@ public class RecentTransactions extends AppCompatActivity {
             TextView signConvention = view.findViewById(R.id.signConvention);
             LinearLayout layout = view.findViewById(R.id.layout);
             ImageView Bill_Image = view.findViewById(R.id.expand_activities_button);
-            if (data.getType().equalsIgnoreCase("credit")) {
+            if (data.getType().equalsIgnoreCase("credit")|| data.getType().equalsIgnoreCase("success")) {
                 signConvention.setText("+");
                 signConvention.setTextColor(Color.parseColor("#FF000000"));
             } else {
@@ -132,7 +134,11 @@ public class RecentTransactions extends AppCompatActivity {
             symbol_rupees.setText(data.getAmount());
             if (list.get(i).getType().equalsIgnoreCase("credit")) {
                 reason.setText("Deposited Cash");
-            } else {
+            }
+            else if(list.get(i).getType().equalsIgnoreCase("success")){
+                reason.setText("Winning amount");
+
+            }else {
                 reason.setText("Joined A Contest");
             }
 
