@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bumptech.glide.Glide;
 import com.example.yoyoiq.PrivacyPolicy.AboutUsActivity;
 import com.example.yoyoiq.WalletPackage.AddCash;
 import com.example.yoyoiq.common.HelperData;
@@ -29,15 +31,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
     private NavigationView navigationView;
-    TextView textView, notification, profileView;
+    TextView textView, notification;
     SessionManager sessionManager;
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
     private FragmentManager fragmentManager;
+    CircleImageView profileView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         profileView = findViewById(R.id.profileView);
+        if(sessionManager.getUserLoginImage()!=null){
+            Glide.with(this)
+                    .load(sessionManager.getUserLoginImage())
+                    .into(profileView);
+
+        }
         new Thread(this::mBottomNavigationBar).start();
 
         drawerLayout = findViewById(R.id.drawerLayout);
@@ -117,31 +128,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @SuppressLint("NonConstantResourceId")
     private void mBottomNavigationBar() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                boolean bool = false;
-                if (bottomNavigationView.getSelectedItemId() != item.getItemId()) {
-                    switch (item.getItemId()) {
-                        case R.id.home:
-                            bool = true;
-                            HomeFragment homeFragment = new HomeFragment();
-                            loadFragment(homeFragment, fragmentManager);
-                            break;
-                        case R.id.my_matches:
-                            bool = true;
-                            MyMatchesFragment myMatchesFragment = new MyMatchesFragment();
-                            loadFragment(myMatchesFragment, fragmentManager);
-                            break;
-                        case R.id.winners:
-                            bool = true;
-                            WinnersFragment winnersFragment = new WinnersFragment();
-                            loadFragment(winnersFragment, fragmentManager);
-                            break;
-                    }
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            boolean bool = false;
+            if (bottomNavigationView.getSelectedItemId() != item.getItemId()) {
+                switch (item.getItemId()) {
+                    case R.id.home:
+                        bool = true;
+                        HomeFragment homeFragment = new HomeFragment();
+                        loadFragment(homeFragment, fragmentManager);
+                        break;
+                    case R.id.my_matches:
+                        bool = true;
+                        MyMatchesFragment myMatchesFragment = new MyMatchesFragment();
+                        loadFragment(myMatchesFragment, fragmentManager);
+                        break;
+                    case R.id.winners:
+                        bool = true;
+                        WinnersFragment winnersFragment = new WinnersFragment();
+                        loadFragment(winnersFragment, fragmentManager);
+                        break;
                 }
-                return bool;
             }
+            return bool;
         });
     }
 

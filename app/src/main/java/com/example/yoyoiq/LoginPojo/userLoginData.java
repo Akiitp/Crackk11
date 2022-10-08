@@ -6,15 +6,24 @@ public class userLoginData {
     String mobile_no;
     String email_id;
     String referral_code;
+    String image;
 
-    public userLoginData(String user_id, String username, String mobile_no, String email_id,String referral_code) {
+    public userLoginData(String user_id, String username, String mobile_no, String email_id, String referral_code, String image) {
         this.user_id = user_id;
         this.username = username;
         this.mobile_no = mobile_no;
         this.email_id = email_id;
         this.referral_code = referral_code;
+        this.image = image;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public String getUser_id() {
         return user_id;

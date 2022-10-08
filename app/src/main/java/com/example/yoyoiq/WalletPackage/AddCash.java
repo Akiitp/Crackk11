@@ -54,7 +54,7 @@ public class AddCash extends AppCompatActivity implements PaymentStatusListener 
     SwipeRefreshLayout swipeRefreshLayout;
     String status1 = "";
     String Pancard = "";
-    String BankAccount = "";
+    String BankAccount = "",winAmount="";
     boolean status = false;
     List<String> checkId = new ArrayList<>();
 
@@ -153,9 +153,11 @@ public class AddCash extends AppCompatActivity implements PaymentStatusListener 
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             balance = jsonObject.getString("balance");
                             bouns_cash = jsonObject.getString("add_bonus");
+                            winAmount = jsonObject.getString("winamount");
                         }
                         amountTv.setText(" " + balance);
                         bonusTv.setText(" " + bouns_cash);
+                        winningsTV.setText(" "+winAmount);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

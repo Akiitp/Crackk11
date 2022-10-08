@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -128,6 +129,7 @@ public class LoginActivity extends AppCompatActivity {
             userName = googleSignInAccount.getDisplayName();
             userEmail = googleSignInAccount.getEmail();
             Uri photoUrl = googleSignInAccount.getPhotoUrl();
+            sessionManager.UserLoginImage(String.valueOf(photoUrl));
             String id = googleSignInAccount.getId();
         }
 
@@ -153,6 +155,8 @@ public class LoginActivity extends AppCompatActivity {
                         cmn.closeDialog(LoginActivity.this);
                     } else if (jsonObject.getString("message").equalsIgnoreCase("Please update your profile")) {
                         Intent intent = new Intent(LoginActivity.this, RegisterDetails.class);
+                        intent.putExtra("GoogleLoginEmail",userEmail);
+                        intent.putExtra("GoogleLoginName",userName);
                         startActivity(intent);
                         gsc.signOut();
                         Toast.makeText(LoginActivity.this, "" + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
@@ -234,10 +238,12 @@ public class LoginActivity extends AppCompatActivity {
                             jsonArray = new JSONArray(totalData);
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                Log.d("Amit","Value233 "+jsonObject);
                                 String email_id = jsonObject.getString("email_id");
                                 String mobile_no = jsonObject.getString("mobile_no");
                                 String user_id = jsonObject.getString("user_id");
                                 String username = jsonObject.getString("username");
+                                String userImage = jsonObject.getString("image");
                                 HelperData.UserId = user_id;
                                 HelperData.UserName = username;
                                 HelperData.Usermobile = mobile_no;
@@ -245,6 +251,7 @@ public class LoginActivity extends AppCompatActivity {
                                 HelperData.referral_code = jsonObject.getString("referral_code");
                                 UserData userData = new UserData(username, mobile_no, email_id, user_id);
                                 sessionManager.saveUser(userData);
+                                sessionManager.UserLoginImage(userImage);
                                 Toast.makeText(LoginActivity.this, "Login Successfully..", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);

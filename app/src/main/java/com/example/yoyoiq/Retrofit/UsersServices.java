@@ -9,6 +9,7 @@ import com.example.yoyoiq.KYC.ViewKycResponse;
 import com.example.yoyoiq.LoginPojo.LoginResponse;
 import com.example.yoyoiq.LoginPojo.RegistrationResponse;
 import com.example.yoyoiq.Model.ReferCode;
+import com.example.yoyoiq.Model.UpdateProfileResponse;
 import com.example.yoyoiq.OnlyMyContestPOJO.MyContest1;
 import com.example.yoyoiq.PlayerPOJO.ResponsePlayer;
 import com.example.yoyoiq.PlayerPOJO.UpdatedTeamResponse;
@@ -21,11 +22,15 @@ import com.example.yoyoiq.WalletPackage.ViewTransactionHistoryResponse;
 
 import org.json.JSONObject;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 
 public interface UsersServices {
 
@@ -89,7 +94,7 @@ public interface UsersServices {
     @FormUrlEncoded
     @POST("userlogin")
     Call<LoginResponse> getUserLoginData(
-            @Field("email_or_mobile") String mobile_no,
+            @Field("mobile") String mobile_no,
             @Field("password") String password
     );
 
@@ -182,4 +187,19 @@ public interface UsersServices {
             @Field("contest_id") String match_id,
             @Field("amount") String contest_id
     );
+
+
+
+    @Multipart
+    @POST("updateprofile")
+    Call<UpdateProfileResponse> UpdateProfile(
+            @Part("user_id") RequestBody userid,
+            @Part("name") RequestBody fullName,
+            @Part MultipartBody.Part image
+
+
+    );
+
+
+
 }

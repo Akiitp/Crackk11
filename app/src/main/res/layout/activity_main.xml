@@ -30,12 +30,12 @@
                 android:orientation="horizontal"
                 android:weightSum="10">
 
-                <TextView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profileView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
                     android:layout_gravity="center"
-                    android:background="@drawable/ic_main_profile_logo"
+                    android:src="@drawable/ic_main_profile_logo"
                     android:gravity="center" />
 
                 <View

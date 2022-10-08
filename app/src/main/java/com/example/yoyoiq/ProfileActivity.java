@@ -1,17 +1,21 @@
 package com.example.yoyoiq;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +23,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.yoyoiq.KYC.ViewKycResponse;
+import com.example.yoyoiq.Model.UpdateProfileResponse;
 import com.example.yoyoiq.Retrofit.ApiClient;
+import com.example.yoyoiq.common.DataArray;
+import com.example.yoyoiq.common.LocalDataBase;
 import com.example.yoyoiq.common.SessionManager;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.github.dhaval2404.imagepicker.util.FileUriUtils;
@@ -33,9 +40,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,7 +61,9 @@ public class ProfileActivity extends AppCompatActivity {
     ImageView profileChange;
     String code = "", profileImagePath = " ";
     boolean status = false;
+    LocalDataBase localDataBase;
     String dob, address;
+    ArrayList<DataArray> mListItem;
     TextView userName, userEmail, phone, userAddress, userDate_of_Birth;
 
     @Override
@@ -58,10 +72,10 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         initMethod();
         setAction();
-        setProfileDetails();
     }
 
     private void initMethod() {
+        localDataBase=new LocalDataBase(this);
         backPress = findViewById(R.id.backPress);
         userProfile = findViewById(R.id.profilePic);
         userName = findViewById(R.id.userName);
@@ -76,10 +90,15 @@ public class ProfileActivity extends AppCompatActivity {
         userName.setText("" + sessionManager.getUserData().getUserName());
         userEmail.setText("" + sessionManager.getUserData().getEmailId());
         phone.setText("" + sessionManager.getUserData().getMobileNo());
+        Log.d("Amit","Value "+sessionManager.getUserLoginImage());
 
-        if (sessionManager.getUserProfileImage() != null) {
-            userProfile.setImageURI(sessionManager.getUserProfileImage());
+        if(sessionManager.getUserLoginImage()!=null){
+            Glide.with(this)
+                    .load(sessionManager.getUserLoginImage())
+                    .into(userProfile);
         }
+
+
         getUserDetailFromAPI();
     }
 
@@ -114,6 +133,39 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    private void UpdateProfileImage(String profileImagePath, Uri selectedImage) {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.show();
+        progressDialog.setTitle("Please wait..");
+
+        MultipartBody.Part fileToUpload1 = null;
+        File myFile1 = new File(profileImagePath);
+
+        RequestBody requestBody1 = RequestBody.create(MediaType.parse("*/*"), myFile1);
+        fileToUpload1 = MultipartBody.Part.createFormData("image", myFile1.getName(), requestBody1);
+
+        RequestBody user_id = RequestBody.create(MediaType.parse("multipart/form-data"), sessionManager.getUserData().getUser_id());
+        RequestBody name = RequestBody.create(MediaType.parse("multipart/form-data"), sessionManager.getUserData().getUserName());
+
+
+
+        Call<UpdateProfileResponse> call=ApiClient.getInstance().getApi().UpdateProfile(user_id,name,fileToUpload1);
+        call.enqueue(new Callback<UpdateProfileResponse>() {
+            @Override
+            public void onResponse(Call<UpdateProfileResponse> call, Response<UpdateProfileResponse> response) {
+                UpdateProfileResponse updateProfileResponse=response.body();
+                if(response.isSuccessful()){
+                    progressDialog.dismiss();
+                    Toast.makeText(ProfileActivity.this, ""+updateProfileResponse.getResponse(), Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<UpdateProfileResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -122,7 +174,8 @@ public class ProfileActivity extends AppCompatActivity {
                 profileImagePath = FileUriUtils.INSTANCE.getRealPath(this, data.getData());
                 Uri selectedImage = data.getData();
                 userProfile.setImageURI(selectedImage);
-                sessionManager.saveProfileImage(selectedImage);
+                sessionManager.UserLoginImage(String.valueOf(selectedImage));
+                UpdateProfileImage(profileImagePath,selectedImage);
                 Bitmap bitmap = null;
                 try {
                     bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
@@ -156,21 +209,7 @@ public class ProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setProfileDetails() {
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this, gso);
-        GoogleSignInAccount googleSignInAccount = GoogleSignIn.getLastSignedInAccount(this);
-        if (googleSignInAccount != null) {
-            String UserName = googleSignInAccount.getDisplayName();
-            userName.setText(UserName);
-            String userEmail = googleSignInAccount.getEmail();
-            Uri photoUrl = googleSignInAccount.getPhotoUrl();
-            String id = googleSignInAccount.getId();
-            Glide.with(this)
-                    .load(photoUrl)
-                    .into(userProfile);
-        }
-    }
+
 
     private void getUserDetailFromAPI() {
         Call<ViewKycResponse> call = ApiClient.getInstance().getApi().getkycDetails(sessionManager.getUserData().getUser_id());

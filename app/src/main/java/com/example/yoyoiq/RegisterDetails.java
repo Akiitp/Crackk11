@@ -72,6 +72,11 @@ public class RegisterDetails extends AppCompatActivity {
         mobileNo = findViewById(R.id.mobileNo);
         emailId = findViewById(R.id.emailId);
         password = findViewById(R.id.password);
+        if(getIntent().hasExtra("GoogleLoginEmail") && getIntent().hasExtra("GoogleLoginName")){
+            emailId.setText(getIntent().getStringExtra("GoogleLoginEmail"));
+            mobileNo.setText(getIntent().getStringExtra("GoogleLoginName"));
+
+        }
     }
 
     private void setAction() {

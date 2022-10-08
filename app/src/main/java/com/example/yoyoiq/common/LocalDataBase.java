@@ -13,72 +13,88 @@ import java.util.ArrayList;
 
 public class LocalDataBase extends SQLiteOpenHelper {
 
+
  private static final int DATABASE_VERSION = 1;
- private static final String DATABASE_NAME = "MyLocalDataBase";
- private static final String MY_TEAM = "MyTeam";
- private static final String Userid = "user_id";
- private static final String TeamName = "team_Name";
- private static final String Contest_id = "contest_id";
- private static final String TeamId = "Team_id";
- private static final String MATCH_ID = "Match_id";
+ private static final String DATABASE_NAME = "Crack11.db";
 
 
+ public static final String TABLE_FAVOURITE = "UserImage";
 
- public LocalDataBase(@Nullable Context context) {
+
+ public static final String USER_ID = "id";
+ public static final String USER_NAME = "User_Name";
+ public static final String USER_IMAGE = "User_image";
+
+ public LocalDataBase(Context context) {
   super(context, DATABASE_NAME, null, DATABASE_VERSION);
  }
 
+
  @Override
  public void onCreate(SQLiteDatabase db) {
+  String CREATE_FAVOURITE_TABLE = "CREATE TABLE " + TABLE_FAVOURITE + "("
+          + USER_ID + " INTEGER,"
+          + USER_NAME + " TEXT,"
+          + USER_IMAGE + " TEXT"
+          + ")";
 
-  String CREATE_MYTEAM_TABLE = " CREATE TABLE " + MY_TEAM + "(" + TeamName + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-          + Userid + " TEXT, " + TeamId + " INTEGER PRIMARY KEY AUTOINCREMENT, " + Contest_id + " TEXT, "+MATCH_ID + ")";
-
-  db.execSQL(CREATE_MYTEAM_TABLE);
-
+  db.execSQL(CREATE_FAVOURITE_TABLE);
  }
+
 
  @Override
  public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-  db.execSQL(" DROP TABLE IF EXISTS "+ MY_TEAM);
-
+  db.execSQL("DROP TABLE IF EXISTS " + TABLE_FAVOURITE);
   onCreate(db);
+
  }
 
- public void AddTeam(String self_user,   String contest_id){
-  SQLiteDatabase db = this.getReadableDatabase();
-  ContentValues contentValues = new ContentValues();
-  contentValues.put(Userid,self_user);
-  contentValues.put(Contest_id,contest_id);
-  db.insert(MY_TEAM,null,contentValues);
-  db.close();
+
+ public void addImage(String TableName, ContentValues contentvalues, String s1) {
+  SQLiteDatabase db = this.getWritableDatabase();
+  db.insert(TableName, s1, contentvalues);
  }
 
- public void getTeamInformation(int id){
-  SQLiteDatabase db = this.getReadableDatabase();
-  Cursor cursor = db.rawQuery("select * from " + MY_TEAM + " where id="+id+"", null);
- }
 
- @SuppressLint("Range")
- public int getLastStudentsId(){
-  int count = 0;
-  SQLiteDatabase db = this.getReadableDatabase();
-  String query = "SELECT * FROM " +MY_TEAM ;
-  Cursor cursor = db.rawQuery(query,null);
-  if(cursor != null && !cursor.isClosed()){
-   cursor.moveToLast();
-
-   if(cursor.getCount() == 0) {
-    count = 1;
-   }else{
-    count = cursor.getInt(cursor.getColumnIndex(TeamName));
-   }
+ public ArrayList<DataArray> getImage() {
+  ArrayList<DataArray> movieList = new ArrayList<>();
+  String selectQuery = "SELECT *  FROM "
+          + TABLE_FAVOURITE;
+  SQLiteDatabase db = this.getWritableDatabase();
+  Cursor cursor = db.rawQuery(selectQuery, null);
+  if (cursor.moveToFirst()) {
+   do {
+    DataArray dataArray=new DataArray();
+    dataArray.setId(cursor.getString(cursor.getColumnIndexOrThrow(USER_ID)));
+    dataArray.setName(cursor.getString(cursor.getColumnIndexOrThrow(USER_NAME)));
+    dataArray.setUri(cursor.getString(cursor.getColumnIndexOrThrow(USER_IMAGE)));
+    movieList.add(dataArray);
+   } while (cursor.moveToNext());
   }
-
-  return count;
+  cursor.close();
+  db.close();
+  return movieList;
 
  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }
