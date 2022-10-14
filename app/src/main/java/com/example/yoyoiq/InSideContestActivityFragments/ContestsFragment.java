@@ -1,11 +1,9 @@
 package com.example.yoyoiq.InSideContestActivityFragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,7 +29,7 @@ import retrofit2.Response;
 public class ContestsFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    String match_id,contest_id;
+    String match_id, contest_id;
     String matchA, matchB, price_contribution;
     ArrayList<ContestsListPOJO> list = new ArrayList<>();
     RecyclerView recyclerViewContest;
@@ -50,8 +48,6 @@ public class ContestsFragment extends Fragment {
         return fragment;
     }
 
-
-
     ContestsListAdapter contestsListAdapter;
 
     @Override
@@ -65,7 +61,7 @@ public class ContestsFragment extends Fragment {
 
         recyclerViewContest = root.findViewById(R.id.contestsList);
         swipeRefreshLayout = root.findViewById(R.id.swiper);
-        getAllContests();
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -97,8 +93,9 @@ public class ContestsFragment extends Fragment {
                     //----------------------for Contests----------------------------
                     JSONArray jsonArray1Contest = null;
                     try {
+                        list.clear();
                         jsonArray1Contest = new JSONArray(jsonArray);
-                        if(jsonArray1Contest.length()>0) {
+                        if (jsonArray1Contest.length() > 0) {
                             for (int i = 0; i < jsonArray1Contest.length(); i++) {
                                 JSONObject jsonObjectContest = jsonArray1Contest.getJSONObject(i);
                                 price_contribution = jsonObjectContest.getString("price_contribution");
@@ -127,7 +124,6 @@ public class ContestsFragment extends Fragment {
                         swipeRefreshLayout.setRefreshing(false);
                         e.printStackTrace();
                     }
-
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
                 }

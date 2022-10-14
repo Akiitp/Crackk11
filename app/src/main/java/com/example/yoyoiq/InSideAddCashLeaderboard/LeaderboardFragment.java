@@ -2,12 +2,13 @@ package com.example.yoyoiq.InSideAddCashLeaderboard;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,8 +20,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.yoyoiq.Model.LeaderboardPOJO;
@@ -80,22 +79,19 @@ public class LeaderboardFragment extends Fragment {
         recyclerView = root.findViewById(R.id.recyclerView);
         totalTeam = root.findViewById(R.id.totalTeam);
         swipeRefreshLayout = root.findViewById(R.id.swiper);
-        sessionManager=new SessionManager(getContext());
+        sessionManager = new SessionManager(getContext());
         try {
             getLeaderBoardData(match_id, contest_id);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                try {
-                    swipeRefreshLayout.setRefreshing(false);
-                    getLeaderBoardData(match_id, contest_id);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            try {
+                swipeRefreshLayout.setRefreshing(false);
+                getLeaderBoardData(match_id, contest_id);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         });
         return root;
@@ -150,10 +146,9 @@ public class LeaderboardFragment extends Fragment {
                     String rank = String.valueOf((i + 1));
 
                     String total_points = jsonObject1.getString("total_points");
-                    if(user_id.equalsIgnoreCase(sessionManager.getUserData().getUser_id())){
-                        listItems.add(0,new LeaderboardPOJO(id, user_id, team_id, match_id2, contest_id2, date_time, name, mobile, rank, total_points, jsonArray));
-                    }
-                    else {
+                    if (user_id.equalsIgnoreCase(sessionManager.getUserData().getUser_id())) {
+                        listItems.add(0, new LeaderboardPOJO(id, user_id, team_id, match_id2, contest_id2, date_time, name, mobile, rank, total_points, jsonArray));
+                    } else {
                         LeaderboardPOJO leaderboardPOJO = new LeaderboardPOJO(id, user_id, team_id, match_id2, contest_id2, date_time, name, mobile, rank, total_points, jsonArray);
                         listItems.add(leaderboardPOJO);
                     }
@@ -205,6 +200,9 @@ public class LeaderboardFragment extends Fragment {
             holder.userName.setText(listData.getName());
             holder.userTotalPoints.setText(String.valueOf(listData.getTotal_points()));
             holder.userRank.setText("# " + String.valueOf(listData.getRank()));
+            if (listData.getUser_id().equalsIgnoreCase(sessionManager.getUserData().getUser_id())) {
+                holder.linerLayout.setBackgroundColor(Color.parseColor("#F8F3E2"));
+            }
         }
 
         @Override
@@ -216,6 +214,7 @@ public class LeaderboardFragment extends Fragment {
             TextView userName, userTotalPoints, userRank;
             ImageView userProfile;
             RelativeLayout relativeLayout;
+            LinearLayout linerLayout;
 
             public MyViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -224,6 +223,7 @@ public class LeaderboardFragment extends Fragment {
                 userRank = itemView.findViewById(R.id.userRank);
                 userTotalPoints = itemView.findViewById(R.id.userTotalPoints);
                 relativeLayout = itemView.findViewById(R.id.relativeLayout);
+                linerLayout = itemView.findViewById(R.id.linerLayout);
             }
         }
     }

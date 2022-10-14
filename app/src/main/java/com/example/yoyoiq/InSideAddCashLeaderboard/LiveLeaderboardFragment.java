@@ -3,6 +3,7 @@ package com.example.yoyoiq.InSideAddCashLeaderboard;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,7 +77,7 @@ public class LiveLeaderboardFragment extends Fragment {
         totalTeam = root.findViewById(R.id.totalTeam);
         swipeRefreshLayout = root.findViewById(R.id.swiper);
         progress_circular = root.findViewById(R.id.progress_circular);
-        sessionManager=new SessionManager(getContext());
+        sessionManager = new SessionManager(getContext());
         try {
             getLeaderBoardData(match_id, contest_id);
         } catch (JSONException e) {
@@ -124,7 +124,7 @@ public class LiveLeaderboardFragment extends Fragment {
             public void onResponse(String response) {
                 JSONArray jsonArray1 = new JSONArray();
                 JSONArray jsonArray = new JSONArray();
-                JSONArray particular_json=new JSONArray();
+                JSONArray particular_json = new JSONArray();
                 try {
                     listItems.clear();
                     JSONObject jsonObject = new JSONObject(response);
@@ -132,37 +132,37 @@ public class LiveLeaderboardFragment extends Fragment {
                     if (jsonArray1.length() > 0) {
                         progress_circular.setVisibility(View.GONE);
                         totalTeam.setText("All Teams " + "( " + jsonArray1.length() + " )");
-                    for (int i = 0; i < jsonArray1.length(); i++) {
-                        JSONObject jsonObject1 = jsonArray1.getJSONObject(i);
-                        try {
-                            jsonArray = jsonObject1.getJSONArray("players_response");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        for (int i = 0; i < jsonArray1.length(); i++) {
+                            JSONObject jsonObject1 = jsonArray1.getJSONObject(i);
+                            try {
+                                jsonArray = jsonObject1.getJSONArray("players_response");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
-                        String id = jsonObject1.getString("id");
-                        String user_id = jsonObject1.getString("user_id");
-                        String team_id = jsonObject1.getString("team_id");
-                        String match_id = jsonObject1.getString("match_id");
-                        String contest_id = jsonObject1.getString("contest_id");
-                        String date_time = jsonObject1.getString("date_time");
-                        String name = jsonObject1.getString("name");
-                        String mobile = jsonObject1.getString("mobile");
-                        String rank = String.valueOf((i + 1));
-                        String total_points = jsonObject1.getString("total_points");
-                        if (user_id.equalsIgnoreCase(sessionManager.getUserData().getUser_id())) {
-                            listItems.add(0, new LeaderboardPOJO(id, user_id, team_id, match_id, contest_id, date_time, name, mobile, rank, total_points, jsonArray));
-                        } else {
-                            LeaderboardPOJO leaderboardPOJO = new LeaderboardPOJO(id, user_id, team_id, match_id, contest_id, date_time, name, mobile, rank, total_points, jsonArray);
-                            listItems.add(leaderboardPOJO);
+                            String id = jsonObject1.getString("id");
+                            String user_id = jsonObject1.getString("user_id");
+                            String team_id = jsonObject1.getString("team_id");
+                            String match_id = jsonObject1.getString("match_id");
+                            String contest_id = jsonObject1.getString("contest_id");
+                            String date_time = jsonObject1.getString("date_time");
+                            String name = jsonObject1.getString("name");
+                            String mobile = jsonObject1.getString("mobile");
+                            String rank = String.valueOf((i + 1));
+                            String total_points = jsonObject1.getString("total_points");
+                            if (user_id.equalsIgnoreCase(sessionManager.getUserData().getUser_id())) {
+                                listItems.add(0, new LeaderboardPOJO(id, user_id, team_id, match_id, contest_id, date_time, name, mobile, rank, total_points, jsonArray));
+                            } else {
+                                LeaderboardPOJO leaderboardPOJO = new LeaderboardPOJO(id, user_id, team_id, match_id, contest_id, date_time, name, mobile, rank, total_points, jsonArray);
+                                listItems.add(leaderboardPOJO);
+                            }
                         }
+                        swipeRefreshLayout.setRefreshing(false);
+                        leaderBoardAdapter = new LeaderBoardAdapter(getContext(), listItems);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        recyclerView.setAdapter(leaderBoardAdapter);
+                        leaderBoardAdapter.notifyDataSetChanged();
                     }
-                    swipeRefreshLayout.setRefreshing(false);
-                    leaderBoardAdapter = new LeaderBoardAdapter(getContext(), listItems);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    recyclerView.setAdapter(leaderBoardAdapter);
-                    leaderBoardAdapter.notifyDataSetChanged();
-                }
                 } catch (JSONException e) {
                     progress_circular.setVisibility(View.GONE);
                     swipeRefreshLayout.setRefreshing(false);
@@ -205,7 +205,6 @@ public class LiveLeaderboardFragment extends Fragment {
             return new MyViewHolder(view);
         }
 
-        @SuppressLint("ResourceAsColor")
         @Override
         public void onBindViewHolder(@NonNull LeaderBoardAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
             LeaderboardPOJO listData = list.get(position);
@@ -213,8 +212,8 @@ public class LiveLeaderboardFragment extends Fragment {
             holder.userName.setText(listData.getName());
             holder.userTotalPoints.setText(String.valueOf(listData.getTotal_points()));
             holder.userRank.setText("# " + String.valueOf(listData.getRank()));
-            if(listData.getUser_id().equalsIgnoreCase(sessionManager.getUserData().getUser_id())){
-                holder.linerLayout.setBackgroundColor(R.color.light_yellow);
+            if (listData.getUser_id().equalsIgnoreCase(sessionManager.getUserData().getUser_id())) {
+                holder.linerLayout.setBackgroundColor(Color.parseColor("#F8F3E2"));
             }
 
             holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
