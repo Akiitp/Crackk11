@@ -253,4 +253,5 @@ public class ARFragment extends Fragment {
             getAllPlayer();
         }
     }
+
 }

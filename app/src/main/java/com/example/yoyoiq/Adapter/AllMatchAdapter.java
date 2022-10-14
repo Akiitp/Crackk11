@@ -64,6 +64,7 @@ public class AllMatchAdapter extends RecyclerView.Adapter<AllMatchAdapter.MyView
                 HelperData.matchId = listData.getMatch_id();
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
+
             }
         });
         holder.textViewTitle.setText(list.get(position).getTitle() + " " + list.get(position).getFormat_str());

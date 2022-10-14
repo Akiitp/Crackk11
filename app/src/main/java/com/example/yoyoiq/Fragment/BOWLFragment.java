@@ -252,4 +252,5 @@ public class BOWLFragment extends Fragment {
             getAllPlayer();
         }
     }
+
 }

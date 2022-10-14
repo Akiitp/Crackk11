@@ -25,6 +25,7 @@ public class ContestActivity extends AppCompatActivity {
     PageAdapter pageAdapter;
     TextView matchList, createTeam, createTeam1;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

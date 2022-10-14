@@ -422,4 +422,5 @@ public class CreateTeamActivity extends AppCompatActivity {
         HelperData.teamEdt = false;
         HelperData.copyTeam = false;
     }
+
 }
