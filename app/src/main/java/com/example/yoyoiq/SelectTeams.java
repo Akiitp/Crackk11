@@ -93,6 +93,7 @@ public class SelectTeams extends AppCompatActivity {
                     JSONArray jsonArray = null;
                     String balance = null;
                     String bouns_cash = null;
+                    int winningAmount = 0;
                     int netBalnace = 0;
                     try {
                         jsonArray = new JSONArray(balanceData);
@@ -101,8 +102,9 @@ public class SelectTeams extends AppCompatActivity {
                             balance = jsonObject.getString("balance");
                             netBalnace = Integer.parseInt(balance);
                             bouns_cash = jsonObject.getString("add_bonus");
+                            winningAmount = Integer.parseInt(jsonObject.getString("winamount"));
                         }
-                        if (netBalnace >= netEntryFee) {
+                        if (netBalnace >= netEntryFee || winningAmount>=netEntryFee) {
                             CheckBalanceData(balance, bouns_cash);
                         } else {
                             Intent intent = new Intent(SelectTeams.this, AddCash.class);
