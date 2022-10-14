@@ -12,9 +12,9 @@ public class TotalHomeData {
     String short_name_b;
     String date_start;
     String date_end;
+    String abbr;
 
-
-    public TotalHomeData(String format_str, String title, String match_id, String logo_url_a, String name_a, String short_name_a, String logo_url_b, String name_b, String short_name_b, String date_start, String date_end) {
+    public TotalHomeData(String format_str, String title, String match_id, String logo_url_a, String name_a, String short_name_a, String logo_url_b, String name_b, String short_name_b, String date_start, String date_end, String abbr) {
         this.format_str = format_str;
         this.title = title;
         this.match_id = match_id;
@@ -26,6 +26,7 @@ public class TotalHomeData {
         this.short_name_b = short_name_b;
         this.date_start = date_start;
         this.date_end = date_end;
+        this.abbr = abbr;
     }
 
     public String getFormat_str() {
@@ -114,5 +115,13 @@ public class TotalHomeData {
 
     public void setDate_end(String date_end) {
         this.date_end = date_end;
+    }
+
+    public String getAbbr() {
+        return abbr;
+    }
+
+    public void setAbbr(String abbr) {
+        this.abbr = abbr;
     }
 }

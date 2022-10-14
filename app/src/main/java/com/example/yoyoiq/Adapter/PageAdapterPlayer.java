@@ -12,7 +12,6 @@ import com.example.yoyoiq.Fragment.BATFragment;
 import com.example.yoyoiq.Fragment.BOWLFragment;
 import com.example.yoyoiq.Fragment.WKFragment;
 import com.example.yoyoiq.InSideContestActivityFragments.AllSelectedPlayerFromServer;
-import com.google.gson.JsonArray;
 
 import java.util.List;
 
@@ -23,11 +22,10 @@ public class PageAdapterPlayer extends FragmentPagerAdapter {
     String matchB = "";
     String logo_url_a = "";
     String logo_url_b = "";
-    String AllSelectedData="";
+    String AllSelectedData = "";
+    String abbr = "";
 
-
-
-    public PageAdapterPlayer(@NonNull FragmentManager fm, int behavior, String match_id, String matchA, String matchB, String logo_url_a, String logo_url_b, List<AllSelectedPlayerFromServer> AllSelectedData) {
+    public PageAdapterPlayer(@NonNull FragmentManager fm, int behavior, String match_id, String matchA, String matchB, String logo_url_a, String logo_url_b, List<AllSelectedPlayerFromServer> AllSelectedData, String abbr) {
         super(fm, behavior);
         tabCount = behavior;
         this.match_id = match_id;
@@ -35,7 +33,8 @@ public class PageAdapterPlayer extends FragmentPagerAdapter {
         this.matchB = matchB;
         this.logo_url_a = logo_url_a;
         this.logo_url_b = logo_url_b;
-        this.AllSelectedData =AllSelectedData.toString();
+        this.AllSelectedData = AllSelectedData.toString();
+        this.abbr = abbr;
     }
 
     @NonNull
@@ -48,6 +47,7 @@ public class PageAdapterPlayer extends FragmentPagerAdapter {
                 bundle.putString("matchA", matchA);
                 bundle.putString("matchB", matchB);
                 bundle.putString("AllSelectedData", AllSelectedData);
+                bundle.putString("abbr", abbr);
                 WKFragment wkFragment = new WKFragment();
                 wkFragment.setArguments(bundle);
                 return wkFragment;
@@ -57,6 +57,7 @@ public class PageAdapterPlayer extends FragmentPagerAdapter {
                 bundle1.putString("matchA", matchA);
                 bundle1.putString("matchB", matchB);
                 bundle1.putString("AllSelectedData", AllSelectedData);
+                bundle1.putString("abbr", abbr);
                 BATFragment batFragment = new BATFragment();
                 batFragment.setArguments(bundle1);
                 return batFragment;
@@ -66,6 +67,7 @@ public class PageAdapterPlayer extends FragmentPagerAdapter {
                 bundle2.putString("matchA", matchA);
                 bundle2.putString("matchB", matchB);
                 bundle2.putString("AllSelectedData", AllSelectedData);
+                bundle2.putString("abbr", abbr);
                 ARFragment arFragment = new ARFragment();
                 arFragment.setArguments(bundle2);
                 return arFragment;
@@ -75,6 +77,7 @@ public class PageAdapterPlayer extends FragmentPagerAdapter {
                 bundle3.putString("matchA", matchA);
                 bundle3.putString("matchB", matchB);
                 bundle3.putString("AllSelectedData", AllSelectedData);
+                bundle3.putString("abbr", abbr);
                 BOWLFragment bowlFragment = new BOWLFragment();
                 bowlFragment.setArguments(bundle3);
                 return bowlFragment;

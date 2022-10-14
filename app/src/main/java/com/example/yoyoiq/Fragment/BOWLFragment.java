@@ -99,7 +99,7 @@ public class BOWLFragment extends Fragment {
         Call<ResponsePlayer> call = ApiClient
                 .getInstance()
                 .getApi()
-                .getMatchPlaying11(getArguments().getString("match_id"));
+                .getMatchPlaying11(getArguments().getString("match_id"),getArguments().getString("abbr"));
 
         call.enqueue(new Callback<ResponsePlayer>() {
             @Override

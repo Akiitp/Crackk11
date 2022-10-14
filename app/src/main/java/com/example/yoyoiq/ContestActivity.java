@@ -17,7 +17,7 @@ import com.google.android.material.tabs.TabLayout;
 
 public class ContestActivity extends AppCompatActivity {
     TextView walletTV, backPress, matchATv, matchBTv;
-    String matchA = "", matchB = "", match_id, logo_url_a, logo_url_b, date_start, date_end;
+    String matchA = "", matchB = "", match_id, logo_url_a, logo_url_b, date_start, date_end,abbr;
     LinearLayout createTeamLayout, createTeamLay;
     ViewPager viewPager;
     TabLayout tabLayout;
@@ -83,6 +83,7 @@ public class ContestActivity extends AppCompatActivity {
         logo_url_b = getIntent().getStringExtra("logo_url_b");
         date_start = getIntent().getStringExtra("date_start");
         date_end = getIntent().getStringExtra("date_end");
+        abbr = getIntent().getStringExtra("abbr");
         matchATv.setText(matchA);
         matchBTv.setText(matchB);
         HelperData.logoUrlTeamA = logo_url_a;
@@ -119,6 +120,7 @@ public class ContestActivity extends AppCompatActivity {
             intent.putExtra("logo_url_b", logo_url_b);
             intent.putExtra("date_start", date_start);
             intent.putExtra("date_end", date_end);
+            intent.putExtra("abbr", abbr);
             startActivity(intent);
         });
 
@@ -132,6 +134,7 @@ public class ContestActivity extends AppCompatActivity {
             intent.putExtra("logo_url_b", logo_url_b);
             intent.putExtra("date_start", date_start);
             intent.putExtra("date_end", date_end);
+            intent.putExtra("abbr", abbr);
             startActivity(intent);
         });
     }

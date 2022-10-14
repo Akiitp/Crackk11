@@ -1,7 +1,6 @@
 package com.example.yoyoiq.Fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,7 +93,7 @@ public class WKFragment extends Fragment {
         Call<ResponsePlayer> call = ApiClient
                 .getInstance()
                 .getApi()
-                .getMatchPlaying11(getArguments().getString("match_id"));
+                .getMatchPlaying11(getArguments().getString("match_id"), getArguments().getString("abbr"));
 
        /* for(int k=0; k<allSelectedPlayer.size();k++){
             String pid= String.valueOf(allSelectedPlayer.get(k).getPid());

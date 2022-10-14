@@ -49,7 +49,6 @@ public class AllMatchAdapter extends RecyclerView.Adapter<AllMatchAdapter.MyView
         TotalHomeData listData = list.get(position);
         holder.setIsRecyclable(false);
 
-
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,12 +60,13 @@ public class AllMatchAdapter extends RecyclerView.Adapter<AllMatchAdapter.MyView
                 intent.putExtra("logo_url_b", listData.getLogo_url_b());
                 intent.putExtra("date_start", listData.getDate_start());
                 intent.putExtra("date_end", listData.getDate_end());
+                intent.putExtra("abbr", listData.getAbbr());
                 HelperData.matchId = listData.getMatch_id();
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         });
-        holder.textViewTitle.setText(list.get(position).getTitle()+" "+list.get(position).getFormat_str());
+        holder.textViewTitle.setText(list.get(position).getTitle() + " " + list.get(position).getFormat_str());
 
         holder.matchATv.setText(listData.getName_a());
         holder.shortNameA.setText(listData.getShort_name_a());

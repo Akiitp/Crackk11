@@ -45,7 +45,8 @@ public interface UsersServices {
     @FormUrlEncoded
     @POST("matchPlaying11detail")
     Call<ResponsePlayer> getMatchPlaying11(
-            @Field("match_id") String match_id
+            @Field("match_id") String match_id,
+            @Field("abbr") String abbr
     );
 
     @FormUrlEncoded
@@ -188,18 +189,11 @@ public interface UsersServices {
             @Field("amount") String contest_id
     );
 
-
-
     @Multipart
     @POST("updateprofile")
     Call<UpdateProfileResponse> UpdateProfile(
             @Part("user_id") RequestBody userid,
             @Part("name") RequestBody fullName,
             @Part MultipartBody.Part image
-
-
     );
-
-
-
 }

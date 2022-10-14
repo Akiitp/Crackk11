@@ -6,7 +6,6 @@ import static com.example.yoyoiq.common.HelperData.newTeamMaking;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -34,12 +33,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CreateTeamActivity extends AppCompatActivity {
     TextView backPress;
     Button continueBtn, teamPreview;
-    String match_id, matchA, matchB, logo_url_a, logo_url_b, date_start, date_end;
+    String match_id, matchA, matchB, logo_url_a, logo_url_b, date_start, date_end, abbr;
     ViewPager viewPager;
     TabLayout tabLayout;
     TabItem tabItem1, tabItem2, tabItem3, tabItem4;
@@ -72,10 +72,9 @@ public class CreateTeamActivity extends AppCompatActivity {
             CreateTeamActivity.CreatedTeamId = getIntent().getStringExtra("CreatedTeamId");
             listData = new Gson().fromJson(getIntent().getStringExtra("listdata"), new TypeToken<ArrayList<AllSelectedPlayerFromServer>>() {
             }.getType());
-
         }
+
         if (listData.size() > 0) {
-            Log.d("Amit","Value Copy Team "+listData);
             HelperData.myTeamList.clear();
             for (int i = 0; i < listData.size(); i++) {
                 int id = listData.get(i).getPid();
@@ -95,7 +94,7 @@ public class CreateTeamActivity extends AppCompatActivity {
         }
 
         // till here-------------
-        pageAdapterPlayer = new PageAdapterPlayer(getSupportFragmentManager(), tabLayout.getTabCount(), match_id, matchA, matchB, logo_url_a, logo_url_b, listData);
+        pageAdapterPlayer = new PageAdapterPlayer(getSupportFragmentManager(), tabLayout.getTabCount(), match_id, matchA, matchB, logo_url_a, logo_url_b, listData, abbr);
         viewPager.setAdapter(pageAdapterPlayer);
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -140,10 +139,9 @@ public class CreateTeamActivity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         if (!HelperData.teamEdt) {
-            if(!HelperData.copyTeam){
+            if (!HelperData.copyTeam) {
                 newTeamMaking();
             }
-
         }
 
         playerCounter();
@@ -215,6 +213,7 @@ public class CreateTeamActivity extends AppCompatActivity {
         logo_url_b = getIntent().getStringExtra("logo_url_b");
         date_start = getIntent().getStringExtra("date_start");
         date_end = getIntent().getStringExtra("date_end");
+        abbr = getIntent().getStringExtra("abbr");
 
         tabLayout = findViewById(R.id.tabLayout);
         tabItem1 = findViewById(R.id.WK);
@@ -286,7 +285,6 @@ public class CreateTeamActivity extends AppCompatActivity {
                             if (HelperData.teamEdt == true) {
                                 intent.putExtra("updateTeam", true);
                             }
-                            Log.d("Amit","Value "+HelperData.teamEdt);
                             startActivity(intent);
                             finish();
                         } else {
@@ -421,7 +419,7 @@ public class CreateTeamActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         HelperData.myTeamList.clear();
-        HelperData.teamEdt=false;
-        HelperData.copyTeam=false;
+        HelperData.teamEdt = false;
+        HelperData.copyTeam = false;
     }
 }
