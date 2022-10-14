@@ -181,7 +181,7 @@ public class CompletedMatchFragment extends Fragment {
         queue.add(request);
     }
 
-    //CompletedMath  Adapter
+    //CompletedMatch  Adapter
     public class CompletedMatchAdapter extends RecyclerView.Adapter<CompletedMatchAdapter.MyViewHolder> {
         Context context;
         ArrayList<CompletedMatchPOJO> list;

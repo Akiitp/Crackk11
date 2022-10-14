@@ -74,7 +74,7 @@ public class RegisterDetails extends AppCompatActivity {
         password = findViewById(R.id.password);
         if(getIntent().hasExtra("GoogleLoginEmail") && getIntent().hasExtra("GoogleLoginName")){
             emailId.setText(getIntent().getStringExtra("GoogleLoginEmail"));
-            mobileNo.setText(getIntent().getStringExtra("GoogleLoginName"));
+            userName.setText(getIntent().getStringExtra("GoogleLoginName"));
 
         }
     }

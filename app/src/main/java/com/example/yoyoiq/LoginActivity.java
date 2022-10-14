@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -62,6 +63,7 @@ public class LoginActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     String url = "http://adminapp.tech/crack11/ItsMe/all_apis.php?func=google_login";
     String userEmail, userName;
+    String newUrl="http://adminapp.tech/crack11/api/userlogin";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,6 +214,7 @@ public class LoginActivity extends AppCompatActivity {
             } else {
 //                LoginValidation();
                 LoginValidationFromServer();
+//                LoginValidationUsingNew();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -222,15 +225,17 @@ public class LoginActivity extends AppCompatActivity {
 
     private void LoginValidationFromServer() {
         cmn.setProgressDialog("", "Please wait..", LoginActivity.this, LoginActivity.this);
+        login.setVisibility(View.GONE);
         String mobile = mobileNo.getText().toString().trim();
         String password1 = userPassword.getText().toString().trim();
         Call<LoginResponse> call = ApiClient.getInstance().getApi().getUserLoginData(mobile, password1);
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                Log.d("Amit","api respob "+response);
                 LoginResponse loginResponse = response.body();
                 if (response.isSuccessful()) {
-                    if (loginResponse.getData().trim().toString().equalsIgnoreCase("Login successful")) {
+                    if (loginResponse.getStatus().equalsIgnoreCase("true")) {
                         list = loginResponse.getUserLoginDataArrayList();
                         String totalData = new Gson().toJson(loginResponse.getUserLoginDataArrayList());
                         JSONArray jsonArray = null;
@@ -238,12 +243,17 @@ public class LoginActivity extends AppCompatActivity {
                             jsonArray = new JSONArray(totalData);
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Log.d("Amit","Value233 "+jsonObject);
                                 String email_id = jsonObject.getString("email_id");
                                 String mobile_no = jsonObject.getString("mobile_no");
                                 String user_id = jsonObject.getString("user_id");
                                 String username = jsonObject.getString("username");
-                                String userImage = jsonObject.getString("image");
+                                if(jsonObject.isNull("image")){
+                                    sessionManager.UserLoginImage("null");
+                                }else{
+                                    String userImage = jsonObject.getString("image");
+                                    sessionManager.UserLoginImage(userImage);
+                                    HelperData.ProfileImage.setValue(userImage);
+                                }
                                 HelperData.UserId = user_id;
                                 HelperData.UserName = username;
                                 HelperData.Usermobile = mobile_no;
@@ -251,18 +261,18 @@ public class LoginActivity extends AppCompatActivity {
                                 HelperData.referral_code = jsonObject.getString("referral_code");
                                 UserData userData = new UserData(username, mobile_no, email_id, user_id);
                                 sessionManager.saveUser(userData);
-                                sessionManager.UserLoginImage(userImage);
-                                Toast.makeText(LoginActivity.this, "Login Successfully..", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                                cmn.closeDialog(LoginActivity.this);
+
                             }
+                            Toast.makeText(LoginActivity.this, ""+loginResponse.getData(), Toast.LENGTH_SHORT).show();
+                            cmn.closeDialog(LoginActivity.this);
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                    } else if (loginResponse.getData().trim().toString().equalsIgnoreCase("Username or password something went wrong")) {
-                        showDialog("Invalid Mobile or Password", false);
+                    } else if (loginResponse.getStatus().equalsIgnoreCase("false")) {
+                        showDialog(""+loginResponse.getData(), false);
                         cmn.closeDialog(LoginActivity.this);
                     } else {
                         showDialog("Please Register YourSelf", false);
@@ -274,6 +284,84 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Call<LoginResponse> call, Throwable t) {
             }
         });
+    }
+
+    private void LoginValidationUsingNew(){
+        cmn.setProgressDialog("Please wait..", "", LoginActivity.this, LoginActivity.this);
+        login.setVisibility(View.GONE);
+        RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
+        StringRequest stringRequest=new StringRequest(Request.Method.POST, newUrl, new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject=new JSONObject(response);
+
+                    if(jsonObject.getString("status").equalsIgnoreCase("true")){
+                        JSONArray jsonArray=jsonObject.getJSONArray("response");
+                        for(int i=0; i<jsonArray.length();i++){
+                            JSONObject jsonObject1=jsonArray.getJSONObject(i);
+                            String email_id = jsonObject1.getString("email_id");
+                            String mobile_no = jsonObject1.getString("mobile_no");
+                            String user_id = jsonObject1.getString("user_id");
+                            String username = jsonObject1.getString("username");
+                            if(jsonObject1.isNull("image")){
+                                sessionManager.UserLoginImage("");
+                            }
+                            else{
+                                String userImage1 = jsonObject.getString("image");
+                                sessionManager.UserLoginImage(userImage1);
+                            }
+                            HelperData.UserId = user_id;
+                            HelperData.UserName = username;
+                            HelperData.Usermobile = mobile_no;
+                            HelperData.UserEmail = email_id;
+                            HelperData.referral_code = jsonObject.getString("referral_code");
+                            UserData userData = new UserData(username, mobile_no, email_id, user_id);
+                            sessionManager.saveUser(userData);
+                        }
+                        login.setVisibility(View.VISIBLE);
+                        Toast.makeText(LoginActivity.this, ""+jsonObject.getString("data"), Toast.LENGTH_SHORT).show();
+                        cmn.closeDialog(LoginActivity.this);
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                    else if(jsonObject.getString("status").equalsIgnoreCase("false")){
+                        cmn.closeDialog(LoginActivity.this);
+                        login.setVisibility(View.VISIBLE);
+                        showDialog(""+jsonObject.getString("data"), false);
+                        Toast.makeText(LoginActivity.this, ""+jsonObject.getString("data"), Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d("Amit","Value "+e.toString());
+                    cmn.closeDialog(LoginActivity.this);
+                    showDialog("Please Register Yourself..", false);
+                    login.setVisibility(View.VISIBLE);
+                }
+
+
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                cmn.closeDialog(LoginActivity.this);
+                login.setVisibility(View.VISIBLE);
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("mobile", mobileNo.getText().toString());
+                params.put("password", userPassword.getText().toString());
+                return params;
+            }
+
+        };
+        queue.add(stringRequest);
+
     }
 
     public void showDialog(String message, Boolean isFinish) {

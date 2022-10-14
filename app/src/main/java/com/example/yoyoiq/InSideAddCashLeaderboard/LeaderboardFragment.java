@@ -113,55 +113,47 @@ public class LeaderboardFragment extends Fragment {
     private void getLeaderBoardData(String match_id, String contest_id) throws JSONException {
         listItems.clear();
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        StringRequest request = new StringRequest(Request.Method.POST, url, new com.android.volley.Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                JSONArray jsonArray1 = new JSONArray();
-                JSONArray jsonArray = new JSONArray();
-                try {
-                    listItems.clear();
-                    JSONObject jsonObject = new JSONObject(response);
-                    jsonArray1 = jsonObject.getJSONArray("users");
-                    totalTeam.setText("All Teams " + "( " + jsonArray1.length() + " )");
-                    for (int i = 0; i < jsonArray1.length(); i++) {
-                        JSONObject jsonObject1 = jsonArray1.getJSONObject(i);
+        StringRequest request = new StringRequest(Request.Method.POST, url, response -> {
+            JSONArray jsonArray1 = new JSONArray();
+            JSONArray jsonArray = new JSONArray();
+            try {
+                listItems.clear();
+                JSONObject jsonObject = new JSONObject(response);
+                jsonArray1 = jsonObject.getJSONArray("users");
+                totalTeam.setText("All Teams " + "( " + jsonArray1.length() + " )");
+                for (int i = 0; i < jsonArray1.length(); i++) {
+                    JSONObject jsonObject1 = jsonArray1.getJSONObject(i);
 
-                        try {
-                            jsonArray = jsonObject1.getJSONArray("players_response");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        String id = jsonObject1.getString("id");
-                        String user_id = jsonObject1.getString("user_id");
-                        String team_id = jsonObject1.getString("team_id");
-                        String match_id = jsonObject1.getString("match_id");
-                        String contest_id = jsonObject1.getString("contest_id");
-                        String date_time = jsonObject1.getString("date_time");
-                        String name = jsonObject1.getString("name");
-                        String mobile = jsonObject1.getString("mobile");
-                        String rank = String.valueOf((i + 1));
-                        String total_points = jsonObject1.getString("total_points");
-
-                        LeaderboardPOJO leaderboardPOJO = new LeaderboardPOJO(id, user_id, team_id, match_id, contest_id, date_time, name, mobile, rank, total_points, jsonArray);
-                        listItems.add(leaderboardPOJO);
+                    try {
+                        jsonArray = jsonObject1.getJSONArray("players_response");
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    swipeRefreshLayout.setRefreshing(false);
-                    leaderBoardAdapter = new LeaderBoardAdapter(getContext(), listItems);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    recyclerView.setAdapter(leaderBoardAdapter);
-                    leaderBoardAdapter.notifyDataSetChanged();
-                } catch (JSONException e) {
-                    swipeRefreshLayout.setRefreshing(false);
-                    e.printStackTrace();
+
+                    String id = jsonObject1.getString("id");
+                    String user_id = jsonObject1.getString("user_id");
+                    String team_id = jsonObject1.getString("team_id");
+                    String match_id2 = jsonObject1.getString("match_id");
+                    String contest_id2 = jsonObject1.getString("contest_id");
+                    String date_time = jsonObject1.getString("date_time");
+                    String name = jsonObject1.getString("name");
+                    String mobile = jsonObject1.getString("mobile");
+                    String rank = String.valueOf((i + 1));
+                    String total_points = jsonObject1.getString("total_points");
+
+                    LeaderboardPOJO leaderboardPOJO = new LeaderboardPOJO(id, user_id, team_id, match_id2, contest_id2, date_time, name, mobile, rank, total_points, jsonArray);
+                    listItems.add(leaderboardPOJO);
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
                 swipeRefreshLayout.setRefreshing(false);
+                leaderBoardAdapter = new LeaderBoardAdapter(getContext(), listItems);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                recyclerView.setAdapter(leaderBoardAdapter);
+                leaderBoardAdapter.notifyDataSetChanged();
+            } catch (JSONException e) {
+                swipeRefreshLayout.setRefreshing(false);
+                e.printStackTrace();
             }
-        }) {
+        }, error -> swipeRefreshLayout.setRefreshing(false)) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();

@@ -67,12 +67,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         profileView = findViewById(R.id.profileView);
-        if(sessionManager.getUserLoginImage()!=null){
+
+        Log.d("Amit","Value "+sessionManager.getUserLoginImage());
+
+        if(sessionManager.getUserLoginImage().equalsIgnoreCase("null")){
+           profileView.setImageResource(R.drawable.ic_main_profile_logo);
+            Log.d("Amit","Value check "+sessionManager.getUserLoginImage());
+        }
+        else {
             Glide.with(this)
                     .load(sessionManager.getUserLoginImage())
-                    .into(profileView);
+                    .into(profileView);}
 
-        }
+
+
         new Thread(this::mBottomNavigationBar).start();
 
         drawerLayout = findViewById(R.id.drawerLayout);

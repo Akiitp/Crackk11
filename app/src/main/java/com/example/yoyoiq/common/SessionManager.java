@@ -6,6 +6,8 @@ import android.net.Uri;
 
 import com.example.yoyoiq.Model.UserData;
 
+import java.net.URL;
+
 public class SessionManager {
     private static String SHARED_PREF_NAME1 = "YoyoIq_UserDetails_from_Server";
     private static String SHARED_PREF_NAME2 = "Image";

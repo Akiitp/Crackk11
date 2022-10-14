@@ -42,6 +42,7 @@ public class HelperData {
 
     public static ArrayList<AllSelectedPlayer> myTeamList = new ArrayList<>();
     public static ArrayList<ShortSquadsUploadingPojoClass> myCountyPlayer = new ArrayList<>();
+    public static MutableLiveData<String> ProfileImage = new MutableLiveData<>("");
     public static String team1NameShort = "";
     public static String team2NameShort = "";
     public static boolean teamEdt = false;

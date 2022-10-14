@@ -2,7 +2,6 @@ package com.example.yoyoiq;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -26,12 +25,11 @@ import com.example.yoyoiq.KYC.ViewKycResponse;
 import com.example.yoyoiq.Model.UpdateProfileResponse;
 import com.example.yoyoiq.Retrofit.ApiClient;
 import com.example.yoyoiq.common.DataArray;
+import com.example.yoyoiq.common.HelperData;
 import com.example.yoyoiq.common.LocalDataBase;
 import com.example.yoyoiq.common.SessionManager;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.github.dhaval2404.imagepicker.util.FileUriUtils;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.gson.Gson;
@@ -97,7 +95,9 @@ public class ProfileActivity extends AppCompatActivity {
                     .load(sessionManager.getUserLoginImage())
                     .into(userProfile);
         }
-
+        else{
+            userProfile.setImageResource(R.drawable.ic_profile_pic);
+        }
 
         getUserDetailFromAPI();
     }
@@ -157,11 +157,11 @@ public class ProfileActivity extends AppCompatActivity {
                 if(response.isSuccessful()){
                     progressDialog.dismiss();
                     Toast.makeText(ProfileActivity.this, ""+updateProfileResponse.getResponse(), Toast.LENGTH_SHORT).show();
+                    HelperData.ProfileImage.setValue(String.valueOf(selectedImage));
                 }
             }
             @Override
             public void onFailure(Call<UpdateProfileResponse> call, Throwable t) {
-
             }
         });
     }
