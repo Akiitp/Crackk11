@@ -69,6 +69,11 @@ public class AllMatchAdapter extends RecyclerView.Adapter<AllMatchAdapter.MyView
         });
         holder.textViewTitle.setText(list.get(position).getTitle() + " " + list.get(position).getFormat_str());
 
+        if (listData.getGame_state_str().equalsIgnoreCase("Play Ongoing")) {
+            holder.lineUp.setVisibility(View.VISIBLE);
+            holder.lineUp.setText("Lineups Out");
+        }
+
         holder.matchATv.setText(listData.getName_a());
         holder.shortNameA.setText(listData.getShort_name_a());
         Glide.with(context)

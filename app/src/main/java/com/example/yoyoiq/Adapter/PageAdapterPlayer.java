@@ -90,5 +90,5 @@ public class PageAdapterPlayer extends FragmentPagerAdapter {
     public int getCount() {
         return tabCount;
     }
-    
+
 }
