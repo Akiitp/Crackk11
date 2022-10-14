@@ -20,6 +20,9 @@
             android:orientation="horizontal"
             android:padding="10dp">
 
+
+
+
             <TextView
                 android:id="@+id/upcomingMatch"
                 android:layout_width="match_parent"
@@ -53,5 +56,12 @@
             android:layout_margin="5dp" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:id="@+id/live_progress_bar"/>
 
 </FrameLayout>

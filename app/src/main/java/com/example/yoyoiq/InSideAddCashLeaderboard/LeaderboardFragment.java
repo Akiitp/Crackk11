@@ -3,6 +3,7 @@ package com.example.yoyoiq.InSideAddCashLeaderboard;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,10 +80,18 @@ public class LeaderboardFragment extends Fragment {
         recyclerView = root.findViewById(R.id.recyclerView);
         totalTeam = root.findViewById(R.id.totalTeam);
         swipeRefreshLayout = root.findViewById(R.id.swiper);
+        sessionManager=new SessionManager(getContext());
+        try {
+            getLeaderBoardData(match_id, contest_id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 try {
+                    swipeRefreshLayout.setRefreshing(false);
                     getLeaderBoardData(match_id, contest_id);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -139,12 +148,18 @@ public class LeaderboardFragment extends Fragment {
                     String name = jsonObject1.getString("name");
                     String mobile = jsonObject1.getString("mobile");
                     String rank = String.valueOf((i + 1));
-                    String total_points = jsonObject1.getString("total_points");
 
-                    LeaderboardPOJO leaderboardPOJO = new LeaderboardPOJO(id, user_id, team_id, match_id2, contest_id2, date_time, name, mobile, rank, total_points, jsonArray);
-                    listItems.add(leaderboardPOJO);
+                    String total_points = jsonObject1.getString("total_points");
+                    if(user_id.equalsIgnoreCase(sessionManager.getUserData().getUser_id())){
+                        listItems.add(0,new LeaderboardPOJO(id, user_id, team_id, match_id2, contest_id2, date_time, name, mobile, rank, total_points, jsonArray));
+                    }
+                    else {
+                        LeaderboardPOJO leaderboardPOJO = new LeaderboardPOJO(id, user_id, team_id, match_id2, contest_id2, date_time, name, mobile, rank, total_points, jsonArray);
+                        listItems.add(leaderboardPOJO);
+                    }
+
                 }
-                swipeRefreshLayout.setRefreshing(false);
+
                 leaderBoardAdapter = new LeaderBoardAdapter(getContext(), listItems);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 recyclerView.setAdapter(leaderBoardAdapter);

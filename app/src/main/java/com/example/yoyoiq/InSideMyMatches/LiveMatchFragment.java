@@ -1,11 +1,13 @@
 package com.example.yoyoiq.InSideMyMatches;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -41,6 +43,7 @@ public class LiveMatchFragment extends Fragment {
     TextView textView;
     RecyclerView recyclerView;
     SwipeRefreshLayout swipeRefreshLayout;
+    ProgressBar live_progress_bar;
     ArrayList<TotalHomeData> list = new ArrayList<TotalHomeData>();
 
     public LiveMatchFragment() {
@@ -67,6 +70,7 @@ public class LiveMatchFragment extends Fragment {
 
     LiveMatchListAdapter liveMatchListAdapter;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -75,10 +79,14 @@ public class LiveMatchFragment extends Fragment {
         textView = root.findViewById(R.id.upcomingMatch);
         recyclerView = root.findViewById(R.id.recyclerView);
         swipeRefreshLayout = root.findViewById(R.id.swiper);
+        live_progress_bar=root.findViewById(R.id.live_progress_bar);
+
+        getAllLiveMatches();
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
                 getAllLiveMatches();
             }
         });
@@ -87,6 +95,7 @@ public class LiveMatchFragment extends Fragment {
 
     private void getAllLiveMatches() {
         list.clear();
+        live_progress_bar.setVisibility(View.VISIBLE);
         Call<UpcommingResponse> call = ApiClient
                 .getInstance()
                 .getApi()
@@ -101,6 +110,8 @@ public class LiveMatchFragment extends Fragment {
                     try {
                         list.clear();
                         jsonArray1 = new JSONArray(jsonArray);
+                        if(jsonArray1.length()>0){
+                            live_progress_bar.setVisibility(View.GONE);
                         for (int i = 0; i < jsonArray1.length(); i++) {
                             JSONObject jsonObject = jsonArray1.getJSONObject(i);
                             String title = jsonObject.getString("title");
@@ -133,16 +144,18 @@ public class LiveMatchFragment extends Fragment {
                             TotalHomeData totalHomeData = new TotalHomeData(game_state_str, format_str, title, match_id, logo_url_a, name_a, short_name_a, logo_url_b, name_b, short_name_b, date_start, date_end, abbr);
                             list.add(totalHomeData);
                         }
+                    }
                         if (list.size() > 0) {
+                            live_progress_bar.setVisibility(View.GONE);
                             linearLayout.setVisibility(View.GONE);
                             textView.setVisibility(View.GONE);
                             liveMatchListAdapter = new LiveMatchListAdapter(getContext(), list);
                             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                             recyclerView.setAdapter(liveMatchListAdapter);
                             liveMatchListAdapter.notifyDataSetChanged();
-                            swipeRefreshLayout.setRefreshing(false);
                         } else if (list.isEmpty()) {
                             swipeRefreshLayout.setRefreshing(false);
+                            live_progress_bar.setVisibility(View.GONE);
                             linearLayout.setVisibility(View.VISIBLE);
                             textView.setVisibility(View.VISIBLE);
                             linearLayout.setOnClickListener(new View.OnClickListener() {
@@ -155,10 +168,12 @@ public class LiveMatchFragment extends Fragment {
                         }
                         swipeRefreshLayout.setRefreshing(false);
                     } catch (JSONException e) {
+                        live_progress_bar.setVisibility(View.GONE);
                         swipeRefreshLayout.setRefreshing(false);
                         e.printStackTrace();
                     }
                 } else {
+                    live_progress_bar.setVisibility(View.GONE);
                     swipeRefreshLayout.setRefreshing(false);
                 }
             }

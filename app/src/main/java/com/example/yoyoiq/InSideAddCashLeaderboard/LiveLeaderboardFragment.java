@@ -11,10 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -40,8 +43,6 @@ import java.util.Map;
 public class LiveLeaderboardFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private String mParam1;
-    private String mParam2;
     String match_id1, contest_id1;
     String match_id, contest_id, matchB, matchA;
     RecyclerView recyclerView;
@@ -49,6 +50,7 @@ public class LiveLeaderboardFragment extends Fragment {
     SwipeRefreshLayout swipeRefreshLayout;
     TextView totalTeam;
     SessionManager sessionManager;
+    ProgressBar progress_circular;
     String url = "http://adminapp.tech/crack11/ItsMe/all_apis.php?func=get_leaderboard_users";
 
     public LiveLeaderboardFragment() {
@@ -64,14 +66,6 @@ public class LiveLeaderboardFragment extends Fragment {
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     LeaderBoardAdapter leaderBoardAdapter;
 
@@ -82,6 +76,13 @@ public class LiveLeaderboardFragment extends Fragment {
         recyclerView = root.findViewById(R.id.recyclerView);
         totalTeam = root.findViewById(R.id.totalTeam);
         swipeRefreshLayout = root.findViewById(R.id.swiper);
+        progress_circular = root.findViewById(R.id.progress_circular);
+        sessionManager=new SessionManager(getContext());
+        try {
+            getLeaderBoardData(match_id, contest_id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -115,6 +116,7 @@ public class LiveLeaderboardFragment extends Fragment {
     }
 
     private void getLeaderBoardData(String match_id, String contest_id) throws JSONException {
+        progress_circular.setVisibility(View.VISIBLE);
         listItems.clear();
         RequestQueue queue = Volley.newRequestQueue(getContext());
         StringRequest request = new StringRequest(Request.Method.POST, url, new com.android.volley.Response.Listener<String>() {
@@ -122,14 +124,16 @@ public class LiveLeaderboardFragment extends Fragment {
             public void onResponse(String response) {
                 JSONArray jsonArray1 = new JSONArray();
                 JSONArray jsonArray = new JSONArray();
+                JSONArray particular_json=new JSONArray();
                 try {
                     listItems.clear();
                     JSONObject jsonObject = new JSONObject(response);
                     jsonArray1 = jsonObject.getJSONArray("users");
-                    totalTeam.setText("All Teams " + "( " + jsonArray1.length() + " )");
+                    if (jsonArray1.length() > 0) {
+                        progress_circular.setVisibility(View.GONE);
+                        totalTeam.setText("All Teams " + "( " + jsonArray1.length() + " )");
                     for (int i = 0; i < jsonArray1.length(); i++) {
                         JSONObject jsonObject1 = jsonArray1.getJSONObject(i);
-
                         try {
                             jsonArray = jsonObject1.getJSONArray("players_response");
                         } catch (Exception e) {
@@ -146,16 +150,21 @@ public class LiveLeaderboardFragment extends Fragment {
                         String mobile = jsonObject1.getString("mobile");
                         String rank = String.valueOf((i + 1));
                         String total_points = jsonObject1.getString("total_points");
-
-                        LeaderboardPOJO leaderboardPOJO = new LeaderboardPOJO(id, user_id, team_id, match_id, contest_id, date_time, name, mobile, rank, total_points, jsonArray);
-                        listItems.add(leaderboardPOJO);
+                        if (user_id.equalsIgnoreCase(sessionManager.getUserData().getUser_id())) {
+                            listItems.add(0, new LeaderboardPOJO(id, user_id, team_id, match_id, contest_id, date_time, name, mobile, rank, total_points, jsonArray));
+                        } else {
+                            LeaderboardPOJO leaderboardPOJO = new LeaderboardPOJO(id, user_id, team_id, match_id, contest_id, date_time, name, mobile, rank, total_points, jsonArray);
+                            listItems.add(leaderboardPOJO);
+                        }
                     }
                     swipeRefreshLayout.setRefreshing(false);
                     leaderBoardAdapter = new LeaderBoardAdapter(getContext(), listItems);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                     recyclerView.setAdapter(leaderBoardAdapter);
                     leaderBoardAdapter.notifyDataSetChanged();
+                }
                 } catch (JSONException e) {
+                    progress_circular.setVisibility(View.GONE);
                     swipeRefreshLayout.setRefreshing(false);
                     e.printStackTrace();
                 }
@@ -163,6 +172,7 @@ public class LiveLeaderboardFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progress_circular.setVisibility(View.GONE);
                 swipeRefreshLayout.setRefreshing(false);
             }
         }) {
@@ -195,6 +205,7 @@ public class LiveLeaderboardFragment extends Fragment {
             return new MyViewHolder(view);
         }
 
+        @SuppressLint("ResourceAsColor")
         @Override
         public void onBindViewHolder(@NonNull LeaderBoardAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
             LeaderboardPOJO listData = list.get(position);
@@ -202,6 +213,9 @@ public class LiveLeaderboardFragment extends Fragment {
             holder.userName.setText(listData.getName());
             holder.userTotalPoints.setText(String.valueOf(listData.getTotal_points()));
             holder.userRank.setText("# " + String.valueOf(listData.getRank()));
+            if(listData.getUser_id().equalsIgnoreCase(sessionManager.getUserData().getUser_id())){
+                holder.linerLayout.setBackgroundColor(R.color.light_yellow);
+            }
 
             holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -228,6 +242,7 @@ public class LiveLeaderboardFragment extends Fragment {
             TextView userName, userTotalPoints, userRank;
             ImageView userProfile;
             RelativeLayout relativeLayout;
+            LinearLayout linerLayout;
 
             public MyViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -236,6 +251,7 @@ public class LiveLeaderboardFragment extends Fragment {
                 userRank = itemView.findViewById(R.id.userRank);
                 userTotalPoints = itemView.findViewById(R.id.userTotalPoints);
                 relativeLayout = itemView.findViewById(R.id.relativeLayout);
+                linerLayout = itemView.findViewById(R.id.linerLayout);
             }
         }
     }

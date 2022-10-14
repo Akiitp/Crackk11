@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,8 +36,6 @@ public class ContestsFragment extends Fragment {
     ArrayList<ContestsListPOJO> list = new ArrayList<>();
     RecyclerView recyclerViewContest;
     SwipeRefreshLayout swipeRefreshLayout;
-    private String mParam1;
-    private String mParam2;
 
     public ContestsFragment() {
         // Required empty public constructor
@@ -51,14 +50,7 @@ public class ContestsFragment extends Fragment {
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+
 
     ContestsListAdapter contestsListAdapter;
 
@@ -73,6 +65,7 @@ public class ContestsFragment extends Fragment {
 
         recyclerViewContest = root.findViewById(R.id.contestsList);
         swipeRefreshLayout = root.findViewById(R.id.swiper);
+        getAllContests();
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -105,28 +98,30 @@ public class ContestsFragment extends Fragment {
                     JSONArray jsonArray1Contest = null;
                     try {
                         jsonArray1Contest = new JSONArray(jsonArray);
-                        for (int i = 0; i < jsonArray1Contest.length(); i++) {
-                            JSONObject jsonObjectContest = jsonArray1Contest.getJSONObject(i);
-                            price_contribution = jsonObjectContest.getString("price_contribution");
+                        if(jsonArray1Contest.length()>0) {
+                            for (int i = 0; i < jsonArray1Contest.length(); i++) {
+                                JSONObject jsonObjectContest = jsonArray1Contest.getJSONObject(i);
+                                price_contribution = jsonObjectContest.getString("price_contribution");
 
-                            contest_id = jsonObjectContest.getString("contest_id");
-                            String contest_name = jsonObjectContest.getString("contest_name");
-                            String entry = jsonObjectContest.getString("entry");
-                            String join_team = jsonObjectContest.getString("join_team");
-                            String prize_pool = jsonObjectContest.getString("prize_pool");
-                            String total_team = jsonObjectContest.getString("total_team");
-                            String winners = jsonObjectContest.getString("winners");
-                            String first_price = jsonObjectContest.getString("first_price");
-                            String winning_percentage = jsonObjectContest.getString("winning_percentage");
-                            String upto = jsonObjectContest.getString("upto");
+                                contest_id = jsonObjectContest.getString("contest_id");
+                                String contest_name = jsonObjectContest.getString("contest_name");
+                                String entry = jsonObjectContest.getString("entry");
+                                String join_team = jsonObjectContest.getString("join_team");
+                                String prize_pool = jsonObjectContest.getString("prize_pool");
+                                String total_team = jsonObjectContest.getString("total_team");
+                                String winners = jsonObjectContest.getString("winners");
+                                String first_price = jsonObjectContest.getString("first_price");
+                                String winning_percentage = jsonObjectContest.getString("winning_percentage");
+                                String upto = jsonObjectContest.getString("upto");
 
-                            ContestsListPOJO contestsListPOJO = new ContestsListPOJO(contest_id, contest_name, entry, join_team, prize_pool, total_team, winners, first_price, winning_percentage, upto, matchA, matchB, match_id, price_contribution);
-                            list.add(contestsListPOJO);
-                            contestsListAdapter = new ContestsListAdapter(getContext(), list);
-                            recyclerViewContest.setLayoutManager(new LinearLayoutManager(getContext()));
-                            recyclerViewContest.setAdapter(contestsListAdapter);
-                            contestsListAdapter.notifyDataSetChanged();
-                            swipeRefreshLayout.setRefreshing(false);
+                                ContestsListPOJO contestsListPOJO = new ContestsListPOJO(contest_id, contest_name, entry, join_team, prize_pool, total_team, winners, first_price, winning_percentage, upto, matchA, matchB, match_id, price_contribution);
+                                list.add(contestsListPOJO);
+                                contestsListAdapter = new ContestsListAdapter(getContext(), list);
+                                recyclerViewContest.setLayoutManager(new LinearLayoutManager(getContext()));
+                                recyclerViewContest.setAdapter(contestsListAdapter);
+                                contestsListAdapter.notifyDataSetChanged();
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
                         }
                     } catch (Exception e) {
                         swipeRefreshLayout.setRefreshing(false);

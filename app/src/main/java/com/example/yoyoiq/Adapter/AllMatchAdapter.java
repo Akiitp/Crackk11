@@ -30,7 +30,6 @@ public class AllMatchAdapter extends RecyclerView.Adapter<AllMatchAdapter.MyView
     private String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private Handler handler = new Handler();
     private Runnable runnable;
-    //This Adapter is use for MatchList(Means Upcoming Match)
 
     public AllMatchAdapter(Context context, ArrayList<TotalHomeData> list) {
         this.context = context;
