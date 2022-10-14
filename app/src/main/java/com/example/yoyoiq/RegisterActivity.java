@@ -77,6 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Intent i = new Intent(RegisterActivity.this, RegisterDetails.class);
+                        i.putExtra("mobileNumber",mobileNo.getText().toString());
                         startActivity(i);
                         finish();
                     } else {
@@ -118,7 +119,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         @Override
         public void onVerificationFailed(FirebaseException e) {
-            Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
     };
 

@@ -66,7 +66,7 @@ public class AllMatchAdapter extends RecyclerView.Adapter<AllMatchAdapter.MyView
                 context.startActivity(intent);
             }
         });
-        holder.textViewTitle.setText(list.get(position).getTitle());
+        holder.textViewTitle.setText(list.get(position).getTitle()+" "+list.get(position).getFormat_str());
 
         holder.matchATv.setText(listData.getName_a());
         holder.shortNameA.setText(listData.getShort_name_a());

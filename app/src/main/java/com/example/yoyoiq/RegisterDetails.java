@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,10 +40,10 @@ import retrofit2.Response;
 public class RegisterDetails extends AppCompatActivity {
     TextView backPress, registerUser;
     DatabaseConnectivity cmn = DatabaseConnectivity.getInstance();
-    TextView userName;
-    TextView mobileNo;
-    TextView emailId;
-    TextView password;
+    EditText userName;
+    EditText mobileNo;
+    EditText emailId;
+    EditText password;
     ProgressDialog progressDialog;
     SharedPrefManager sharedPrefManager;
     SessionManager sessionManager;
@@ -75,6 +76,9 @@ public class RegisterDetails extends AppCompatActivity {
         if(getIntent().hasExtra("GoogleLoginEmail") && getIntent().hasExtra("GoogleLoginName")){
             emailId.setText(getIntent().getStringExtra("GoogleLoginEmail"));
             userName.setText(getIntent().getStringExtra("GoogleLoginName"));
+        }
+        if(getIntent().hasExtra("mobileNumber")){
+            mobileNo.setText(""+getIntent().getStringExtra("mobileNumber"));
 
         }
     }

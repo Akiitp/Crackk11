@@ -1,6 +1,7 @@
 package com.example.yoyoiq.Model;
 
 public class TotalHomeData {
+    String format_str;
     String title;
     String match_id;
     String logo_url_a;
@@ -12,7 +13,9 @@ public class TotalHomeData {
     String date_start;
     String date_end;
 
-    public TotalHomeData(String title, String match_id, String logo_url_a, String name_a, String short_name_a, String logo_url_b, String name_b, String short_name_b, String date_start, String date_end) {
+
+    public TotalHomeData(String format_str, String title, String match_id, String logo_url_a, String name_a, String short_name_a, String logo_url_b, String name_b, String short_name_b, String date_start, String date_end) {
+        this.format_str = format_str;
         this.title = title;
         this.match_id = match_id;
         this.logo_url_a = logo_url_a;
@@ -23,6 +26,14 @@ public class TotalHomeData {
         this.short_name_b = short_name_b;
         this.date_start = date_start;
         this.date_end = date_end;
+    }
+
+    public String getFormat_str() {
+        return format_str;
+    }
+
+    public void setFormat_str(String format_str) {
+        this.format_str = format_str;
     }
 
     public String getTitle() {
